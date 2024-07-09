@@ -1,32 +1,48 @@
+using System;
+using System.Diagnostics;
+using System.Threading;
+
 public class Activity
 {
     private string _startingMessage;
     private string _endingMessage;
     private string _activityDescription;
     private string _activityName;
-    static int _spinnerCounter = 0;
-    static int _userSessionLengthInput = 0;
-
+    private static int _spinnerCounter = 0;
+    private static int _userSessionLengthInput = 0;
 
     public Activity()
     {
-        _spinnerCounter = _userSessionLengthInput = 0;
+        _spinnerCounter = 0;
+        _userSessionLengthInput = 0;
     }
 
     public void SetActivityName(string activityName)
     {
         _activityName = activityName;
     }
+
     public void SetActivityDescription(string activityDescription)
     {
         _activityDescription = activityDescription;
+    }
+
+    public string GetActivityName()
+    {
+        return _activityName;
+    }
+
+    public string GetActivityDescription()
+    {
+        return _activityDescription;
     }
 
     public int GetUserSessionLengthInput()
     {
         return _userSessionLengthInput;
     }
-    public void DisplayStartingtMessage()
+
+    public void DisplayStartingMessage()
     {
         _startingMessage = $"Welcome to the {_activityName}.";
         Console.WriteLine(_startingMessage);
@@ -38,9 +54,10 @@ public class Activity
         Console.WriteLine(_activityDescription);
         Console.WriteLine();
     }
+
     public void DisplayEndingMessage()
     {
-        _endingMessage = $"You have complete {_userSessionLengthInput} seconds of the {_activityName}.";
+        _endingMessage = $"You have completed {_userSessionLengthInput} seconds of the {_activityName}.";
 
         Console.WriteLine();
         Console.WriteLine("Well done!");
@@ -48,7 +65,8 @@ public class Activity
         Console.WriteLine();
         Console.WriteLine(_endingMessage);
         DisplaySpinner(5);
-        Console.Clear();
+        // Optionally clear console after some time
+        // Console.Clear();
     }
 
     public void DisplaySpinner(int numSecondsToRun)
@@ -86,7 +104,16 @@ public class Activity
     public void DisplayGetSessionLength()
     {
         Console.Write("How long, in seconds, would you like for your session? ");
-        _userSessionLengthInput = int.Parse(Console.ReadLine());
+        string userInput = Console.ReadLine();
+        if (int.TryParse(userInput, out int sessionLength))
+        {
+            _userSessionLengthInput = sessionLength;
+        }
+        else
+        {
+            Console.WriteLine("Invalid input. Please enter a valid number.");
+            DisplayGetSessionLength(); // Recursive call to handle invalid input
+        }
     }
 
     public void DisplayGetReady()
@@ -97,16 +124,15 @@ public class Activity
 
     public void RunActivityParentStart()
     {
-        DisplayStartingtMessage();
+        DisplayStartingMessage();
         DisplayDescription();
         DisplayGetSessionLength();
         DisplayGetReady();
-        Console.Clear();
+        // Console.Clear(); // Consider removing or moving this for better user experience
     }
 
     public void RunActivityParentEnd()
     {
         DisplayEndingMessage();
     }
-
 }
